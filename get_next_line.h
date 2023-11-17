@@ -6,7 +6,7 @@
 /*   By: junhyeop <junhyeop@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 21:33:46 by junhyeop          #+#    #+#             */
-/*   Updated: 2023/11/13 21:45:50 by junhyeop         ###   ########.fr       */
+/*   Updated: 2023/11/17 20:23:20 by junhyeop         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,15 @@
 typedef struct s_gnl_list
 {
 	int			fd;
-	int			idx;
+	int			eof;
 	char		*backup;
 	t_gnl_list	*next;
 }	t_gnl_list;
+
+typedef struct s_str_list
+{
+	char		*s;
+	t_str_list	*next;
+}	t_str_list;
 
 #endif
