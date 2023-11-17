@@ -6,18 +6,58 @@
 /*   By: junhyeop <junhyeop@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 17:58:03 by junhyeop          #+#    #+#             */
-/*   Updated: 2023/11/13 22:05:23 by junhyeop         ###   ########.fr       */
+/*   Updated: 2023/11/17 20:23:50 by junhyeop         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*read_line(t_gnl_list **tmp, int fd)
+char	*find_newline(char *line, t_gnl_list *tmp)
 {
-	char	*buffer;
+	sizt_t	i;
+	int		found;
 
-	buffer = ft_calloc(BUF_SIZE + 1, sizeof(char));
-	
+	found = 0;
+	i = 0;
+	while (tmp->backup[i] != 0)
+	{
+		while (tmp->backup[i++] == '\n')
+		{
+			found = 1;
+			line = malloc(i);
+			ft_strlcpy(line, tmp->backup, i);
+			break ;
+		}
+	}
+	if (found)
+		ft_strlcpy(tmp->backup, tmp->backup + i, ft_strlen(tmp->backup) + 1);
+	return (found);
+}
+
+char	*read_line(t_gnl_list *tmp, int fd)
+{
+	char	*buf;
+	char	*pre;
+	int		n;
+
+	buf = (char *)malloc(sizeof(char), BUF_SIZE + 1);
+	if (!buf)
+		return (NULL);
+	if (n = read(fd, tmp->backup, BUF_SIZE) < 0)
+	{
+		free(buf);
+		return (NULL);
+	}
+	buf[n] = 0;
+	pre = tmp->backup;
+	tmp->backup = ft_strjoin(pre, buf);
+	if (!tmp->backup)
+	{
+		free(pre);
+		return (NULL);
+	}
+	free(pre);
+	return (tmp->backup);
 }
 
 t_gnl_list	*ft_lstnew(int fd)
@@ -28,7 +68,6 @@ t_gnl_list	*ft_lstnew(int fd)
 	new->fd = fd;
 	new->next = NULL;
 	new->backup = NULL;
-	new->idx = 0;
 	return (new);
 }
 
@@ -40,11 +79,14 @@ t_gnl_list	*find_fd(t_gnl_list *tmp, int fd, t_gnl_list *head)
 		if (tmp->fd == fd)
 			return (tmp);
 		if (tmp->next == NULL)
-			break ;
+		{
+			if (!(tmp->next = ft_lstnew(fd)))
+				return (NULL);
+			return (tmp);
+		}
 		tmp = tmp->next;
 	}
-	tmp->next = ft_lstnew(fd);
-	if (tmp->next == NULL);
+	if (!(head = ft_lstnew(fd)))
 		return (NULL);
 	return (head);
 }
@@ -53,7 +95,7 @@ char	*get_next_line(int fd)
 {
 	static t_gnl_list	*head;
 	t_gnl_list			*tmp;
-	char				*res;
+	t_str_list			*str;
 
 	if (fd < 0 || BUF_SIZE <= 0)
 		return (_ERROR);
@@ -62,12 +104,13 @@ char	*get_next_line(int fd)
 	if (!head)
 		return (_ERROR);
 	tmp = find_fd(head, fd, NULL);
-	res = NULL;
 	if (tmp->backup)
-		res = is_nl_backup(&tmp->backup, ft_len_free(tmp->backup, 0), tmp);
+		load_backup(str, tmp);
 	while (1)
 	{
-		if(!res)
-			res = read_line(&tmp, fd);
+		if (str->s != -1)
+			res = read_line(tmp, fd);
+	
+		
 	}
 }
