@@ -1,5 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
+/* ************************************************************************** */*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
@@ -14,7 +13,7 @@
 
 char	*find_newline(char *line, t_gnl_list *tmp)
 {
-	sizt_t	i;
+	size_t	i;
 	int		found;
 
 	found = 0;
@@ -34,14 +33,19 @@ char	*find_newline(char *line, t_gnl_list *tmp)
 	return (found);
 }
 
-char	*read_line(t_gnl_list *tmp, int fd)
+char	*read_line(t_gnl_list *tmp, t_str_list *str, int fd)
 {
-	char	*buf;
-	char	*pre;
+	t_str_list	*head;
 	int		n;
 
-	buf = (char *)malloc(sizeof(char), BUF_SIZE + 1);
-	if (!buf)
+	if (!str)
+	{
+
+	}
+		if (str = ft_lstnew()) 
+	head = str;
+	str->s = (char *)malloc(sizeof(char), BUF_SIZE + 1);
+	if (!str->s)
 		return (NULL);
 	if (n = read(fd, tmp->backup, BUF_SIZE) < 0)
 	{
@@ -74,7 +78,7 @@ t_gnl_list	*ft_lstnew(int fd)
 t_gnl_list	*find_fd(t_gnl_list *tmp, int fd, t_gnl_list *head)
 {
 	head = tmp;
-	while (1)
+	while (tmp)
 	{
 		if (tmp->fd == fd)
 			return (tmp);
@@ -95,7 +99,7 @@ char	*get_next_line(int fd)
 {
 	static t_gnl_list	*head;
 	t_gnl_list			*tmp;
-	t_str_list			*str;
+	char				*str;
 
 	if (fd < 0 || BUF_SIZE <= 0)
 		return (_ERROR);
@@ -104,13 +108,17 @@ char	*get_next_line(int fd)
 	if (!head)
 		return (_ERROR);
 	tmp = find_fd(head, fd, NULL);
+	str = NULL;
 	if (tmp->backup)
-		load_backup(str, tmp);
+		str = load_backup(tmp);
 	while (1)
 	{
-		if (str->s != -1)
-			res = read_line(tmp, fd);
-	
-		
+		if (read_line(tmp, str, fd))
+			return (str);
+		if (tmp->eof)
+		{
+			del_list(tmp);
+			return (str);
+		}
 	}
 }

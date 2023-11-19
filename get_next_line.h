@@ -13,6 +13,7 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 # define BUF_SIZE 42
+# define _ERROR -1
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
