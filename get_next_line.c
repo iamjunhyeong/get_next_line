@@ -11,57 +11,53 @@
 
 #include "get_next_line.h"
 
-char	*find_newline(char *line, t_gnl_list *tmp)
+char	*find_newline(char *line, char *str)
 {
 	size_t	i;
+	char	*s;
 	int		found;
 
 	found = 0;
 	i = 0;
-	while (tmp->backup[i] != 0)
+	str = NULL;
+	while (line[i] != 0)
 	{
-		while (tmp->backup[i++] == '\n')
+		while (line[i++] == '\n')
 		{
 			found = 1;
-			line = malloc(i);
-			ft_strlcpy(line, tmp->backup, i);
+			// s = (char *)malloc(sizeof(char) * i + 1);
+			// ft_strlcpy(s, line, i);
+			// free(line);
 			break ;
 		}
 	}
-	if (found)
-		ft_strlcpy(tmp->backup, tmp->backup + i, ft_strlen(tmp->backup) + 1);
+	// if (found)
+	// 	ft_strjoin(str, s);
 	return (found);
 }
 
-char	*read_line(t_gnl_list *tmp, t_str_list *str, int fd)
+char	*read_line(t_gnl_list *tmp, char *str, int fd)
 {
-	t_str_list	*head;
-	int		n;
+	int			n;
+	char		*line;
 
-	if (!str)
-	{
-
-	}
-		if (str = ft_lstnew()) 
-	head = str;
-	str->s = (char *)malloc(sizeof(char), BUF_SIZE + 1);
-	if (!str->s)
+	line = (char *)malloc(sizeof(char) * BUF_SIZE + 1);
+	if (!line)
 		return (NULL);
-	if (n = read(fd, tmp->backup, BUF_SIZE) < 0)
+	if (n = read(fd, line, BUF_SIZE) <= 0)
 	{
-		free(buf);
+		free(line);
+		tmp->eof = -1;
 		return (NULL);
 	}
-	buf[n] = 0;
-	pre = tmp->backup;
-	tmp->backup = ft_strjoin(pre, buf);
-	if (!tmp->backup)
+	line[n] = '\0';
+	if (find_newline(line))
 	{
-		free(pre);
-		return (NULL);
+		str = ft_strjoin(str, line);
+		return (1);
 	}
-	free(pre);
-	return (tmp->backup);
+	str = ft_strjoin(str, line);
+	return (0);
 }
 
 t_gnl_list	*ft_lstnew(int fd)
@@ -73,6 +69,23 @@ t_gnl_list	*ft_lstnew(int fd)
 	new->next = NULL;
 	new->backup = NULL;
 	return (new);
+}
+
+void	lst_delone(t_gnl_list *remove, t_gnl_list *haed)
+{
+	t_gnl_list	*tmp;
+
+	tmp = head;
+	while (!tmp)
+	{
+		if (tmp->next == remove)
+		{
+			tmp->next = remove->next;
+			free(remove->backup);
+			free(remove);
+		}
+		tmp = tmp->next;
+	}
 }
 
 t_gnl_list	*find_fd(t_gnl_list *tmp, int fd, t_gnl_list *head)
@@ -117,7 +130,7 @@ char	*get_next_line(int fd)
 			return (str);
 		if (tmp->eof)
 		{
-			del_list(tmp);
+			lst_delone(tmp);
 			return (str);
 		}
 	}

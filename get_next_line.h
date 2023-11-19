@@ -27,10 +27,4 @@ typedef struct s_gnl_list
 	t_gnl_list	*next;
 }	t_gnl_list;
 
-typedef struct s_str_list
-{
-	char		*s;
-	t_str_list	*next;
-}	t_str_list;
-
 #endif
