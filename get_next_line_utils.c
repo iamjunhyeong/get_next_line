@@ -12,27 +12,27 @@
 
 #include "get_next_line.h"
 
-char	*ft_strdup(const char *s1)
+char	*ft_strndup(const char *str, size_t n)
 {
-	int		i;
-	int		len;
-	char	*temp;
+	size_t	len;
+	size_t	i;
+	char	*copy;
 
+	len = 0;
 	i = 0;
-	len = ft_strlen(s1);
-	temp = (char *)malloc(sizeof(char) * (len + 1));
-	if (temp == 0)
-		return (0);
-	while (s1[i] != 0)
-	{
-		temp[i] = s1[i];
-		i++;
-	}
-	temp[i] = 0;
-	return (temp);
+	while (len < n && str[len])
+		len++;
+
+	if ((copy = malloc(len + 1)) == NULL)
+		return (NULL);
+
+	while (len-- > 0)
+		copy[i++] = *str++;
+	copy[len] = '\0';
+	return (copy);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2, size_t len)
 {
 	size_t	len;
 	size_t	i;
@@ -47,8 +47,19 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		return (NULL);
 	while (*s1)
 		str[i++] = *s1++;
-	while (*s2 || *s2 != '\n')
+	while (*s2 && *s2 != '\n')
 		str[i++] = *s2++;
+	str[i++] = '\n';
 	str[i] = 0;
 	return ((char *)str);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	n;
+
+	n = 0;
+	while (s[n] != 0)
+		n++;
+	return (n);
 }

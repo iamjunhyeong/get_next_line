@@ -12,19 +12,32 @@
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUF_SIZE 42
+# ifndef BUFFER_SIZE
+	# define BUFFER_SIZE 42
+#endif
 # define _ERROR -1
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include <limits.h>
+
 
 typedef struct s_gnl_list
 {
 	int			fd;
 	int			eof;
 	char		*backup;
-	t_gnl_list	*next;
+	struct s_gnl_list	*next;
 }	t_gnl_list;
+
+t_gnl_list	*ft_lstnew(int fd);
+t_gnl_list	*find_fd(t_gnl_list *tmp, int fd, t_gnl_list *head);
+size_t		ft_strlen(const char *s);
+char		*get_next_line(int fd);
+char		*ft_strndup(const char *str, size_t n);
+char		*ft_strjoin(const char *s1, char const *s2, size_t n);
+void		lst_delone(t_gnl_list *remove, t_gnl_list *haed);
+int			read_line(t_gnl_list *tmp, char **str, int fd);
+int	find_newline(char *line, t_gnl_list *tmp, int isload);
+char		*load_backup(t_gnl_list *tmp);
 
 #endif
