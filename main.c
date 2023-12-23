@@ -24,7 +24,7 @@ char	*ft_strndup(const char *str, size_t n)
 	return (copy);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2, size_t n)
+char	*ft_strjoin(char **s1, char const *s2, size_t n)
 {
 	size_t	len;
 	size_t	i;

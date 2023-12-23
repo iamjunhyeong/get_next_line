@@ -20,6 +20,12 @@
 # include <unistd.h>
 # include <fcntl.h>
 
+typedef struct s_var
+{
+	int		len;
+	int		n;
+	char	*str;
+}	t_var;
 
 typedef struct s_gnl_list
 {
@@ -30,14 +36,13 @@ typedef struct s_gnl_list
 }	t_gnl_list;
 
 t_gnl_list	*ft_lstnew(int fd);
-t_gnl_list	*find_fd(t_gnl_list *tmp, int fd, t_gnl_list *head);
-size_t		ft_strlen(const char *s);
+t_gnl_list	*find_fd(t_gnl_list **head, int fd, t_gnl_list *tmp);
 char		*get_next_line(int fd);
 char		*ft_strndup(const char *str, size_t n);
-char		*ft_strjoin(const char *s1, char const *s2, size_t n);
+char		*ft_strjoin(char *s1, char const *s2, size_t n);
 void		lst_delone(t_gnl_list *remove, t_gnl_list *haed);
-int			read_line(t_gnl_list *tmp, char **str, int fd);
-int	find_newline(char *line, t_gnl_list *tmp, int isload);
+char		*read_line(t_gnl_list *tmp, char **line, int fd);
+int			find_newline(char *line, t_gnl_list *tmp);
 char		*load_backup(t_gnl_list *tmp);
 
 #endif
