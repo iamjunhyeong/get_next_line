@@ -43,6 +43,6 @@ char		*ft_strjoin(char *s1, char const *s2, size_t n);
 void		lst_delone(t_gnl_list *remove, t_gnl_list *haed);
 char		*read_line(t_gnl_list *tmp, char **line, int fd);
 int			find_newline(char *line, t_gnl_list *tmp);
-char		*load_backup(t_gnl_list *tmp);
+char		*load_backup(t_gnl_list *tmp, int *found);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: junhyeop <junhyeop@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 15:15:51 by junhyeop          #+#    #+#             */
-/*   Updated: 2023/12/23 20:15:18 by junhyeop         ###   ########.fr       */
+/*   Updated: 2023/12/23 22:53:08 by junhyeop         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ char	*ft_strndup(const char *str, size_t n)
 	i = 0;
 	while (len < n && str[len])
 		len++;
-	copy = malloc(len + 1);
+	copy = (char*)malloc(sizeof(char) * (len + 1));
 	if (!copy)
 		return (NULL);
-	while (len-- > 0)
+	while (len-- > 0 || *str)
 		copy[i++] = *str++;
 	copy[i] = '\0';
 	return (copy);
@@ -84,16 +84,17 @@ int	find_newline(char *str, t_gnl_list *tmp)
 	return (0);
 }
 
-char	*load_backup(t_gnl_list *tmp)
+char	*load_backup(t_gnl_list *tmp, int *found)
 {
 	t_var	var;
 	char	*copy;
 
 	var = (struct s_var){0, 0, NULL};
-	var.str = tmp->backup;
+	var.str = ft_strndup(tmp->backup, BUFFER_SIZE);
 	var.len = find_newline(var.str, tmp);
 	if (var.len)
 	{
+		*found = 1;
 		copy = ft_strndup(var.str, var.len + 1);
 		free(var.str);
 		return (copy);
@@ -109,8 +110,6 @@ char	*read_line(t_gnl_list *tmp, char **line, int fd)
 {
 	t_var	var;
 
-	if (tmp->backup)
-		*line = load_backup(tmp);
 	while (1)
 	{
 		var.str = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
@@ -207,23 +206,23 @@ char	*get_next_line(int fd)
 	static t_gnl_list	*head;
 	t_gnl_list			*tmp;
 	char				*str;
-
+	int 				found;
+	
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	tmp = find_fd(&head, fd, NULL);
 	if (!tmp)
 		return (NULL);
 	str = NULL;
-	while (1)
-	{
-		read_line(tmp, &str, fd);
-		if (tmp->eof || str)
-		{
-			if (tmp->eof)
-				lst_delone(tmp, head);
-			return (str);
-		}
-	}
+	found = 0;
+	if (tmp->backup)
+		str = load_backup(tmp, &found);
+	if (!found || !str)
+		str = read_line(tmp, &str, fd);
+	if (tmp->eof)
+		lst_delone(tmp, head);
+
+	return (str);
 }
 
 #include <stdio.h>
