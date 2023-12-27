@@ -52,8 +52,8 @@ char	*load_backup(t_gnl_list *tmp, int *found)
 	}
 	copy = ft_strndup(var.str, BUFFER_SIZE);
 	free(var.str);
-	// free(tmp->backup);
-	// tmp->backup = NULL;
+	free(tmp->backup);
+	tmp->backup = NULL;
 	return (copy);
 }
 
@@ -92,13 +92,6 @@ char	*read_line(t_gnl_list *tmp, char **line, int fd, int found)
 	tmp->eof = 1;
 	return (*line);
 }
-
-// char	*newline_exists(int len, char **line, char **str);
-// {
-	
-// }
-
-
 
 t_gnl_list	*find_fd(t_gnl_list **head, int fd, t_gnl_list *tmp)
 {
@@ -141,6 +134,3 @@ char	*get_next_line(int fd)
 		head = lst_delone(tmp, head, NULL);
 	return (str);
 }
-
-
-
