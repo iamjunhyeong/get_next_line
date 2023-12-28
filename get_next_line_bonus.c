@@ -64,14 +64,14 @@ char	*load_backup(t_gnl_list *tmp, int *found)
 	return (copy);
 }
 
-char	*read_line(t_gnl_list *tmp, char **line, int fd, int found)
+char	*read_line(t_gnl_list *tmp, char *line, int fd, int found)
 {
 	t_var	var;
 
 	if (tmp->backup)
 	{
-		*line = load_backup(tmp, &found);
-		if (*line == NULL)
+		line = load_backup(tmp, &found);
+		if (line == NULL)
 			return (NULL);
 	}
 	while (!found)
@@ -86,34 +86,43 @@ char	*read_line(t_gnl_list *tmp, char **line, int fd, int found)
 			break ;
 		}
 		var.str[var.n] = '\0';
-		var.len = find_newline(var.str, tmp); 
-		if (var.str[var.len] != 0)
-			tmp->backup = ft_strndup(&var.str[var.len], BUFFER_SIZE);
-
-		if (*line == NULL)
-			*line = ft_strndup("", 0);
-		if (*line == NULL)
+		var.len = find_newline(var.str, tmp);
+		if (line == NULL)
+			line = ft_strndup("", 0);
+		if (line == NULL)
+		{
+			free(var.str);
 			return (NULL);
+		}
 		if (var.len) // newline exists
 		{
-			*line = ft_strjoin(*line, var.str, var.len);
+			if (var.str[var.len])
+			{
+				tmp->backup = ft_strndup(&var.str[var.len], BUFFER_SIZE);
+				if (tmp->backup == NULL)
+				{
+					free(var.str);
+					return (NULL);
+				}
+			}
+			line = ft_strjoin(line, var.str, var.len);
 			free(var.str);
-			if (!*line)
+			if (!line)
 				return (NULL);
-			return (*line);
+			return (line);
 		}
-		*line = ft_strjoin(*line, var.str, BUFFER_SIZE);
+		line = ft_strjoin(line, var.str, BUFFER_SIZE);
 		free(var.str);
-		if (!*line)
+		if (!line)
 			return (NULL);
 	}
 	tmp->eof = 1;
-	return (*line);
+	return (line);
 }
 
 // char	*newline_exists(int len, char **line, char **str);
 // {
-	
+
 // }
 
 
@@ -148,14 +157,16 @@ char	*get_next_line(int fd)
 	t_gnl_list			*tmp;
 	char				*str;
 	
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (read(fd, NULL, 0) == -1 || BUFFER_SIZE <= 0)
 		return (NULL);
 	tmp = find_fd(&head, fd, NULL);
 	if (!tmp)
 		return (NULL);
-	str = NULL;
-	str = read_line(tmp, &str, fd, 0);
-	if (tmp->eof)
-		head = lst_delone(tmp, head, NULL);
+	str = read_line(tmp, NULL, fd, 0);
+	if (!str || tmp->eof)
+	{
+		lst_delone(tmp, &head, NULL);
+		return (str);
+	}
 	return (str);
 }
