@@ -1,7 +1,4 @@
 #include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
 #include "get_next_line.h"
 
 // char	*ft_strndup(const char *str, size_t n)

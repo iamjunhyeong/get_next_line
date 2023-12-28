@@ -15,7 +15,9 @@
 int	find_newline(char *str, t_gnl_list *tmp)
 {
 	t_var	var;
+	int		len;
 
+	len = 0;
 	var = (struct s_var){0, 0, NULL};
 	while (str[var.n] != 0)
 	{
@@ -26,8 +28,8 @@ int	find_newline(char *str, t_gnl_list *tmp)
 				free(tmp->backup);
 				tmp->backup = NULL;
 			}
-			if (str[var.n + 1] != 0)
-				tmp->backup = ft_strndup(&str[var.n + 1], BUFFER_SIZE);
+			// if (str[var.n + 1] != 0)
+			// 	tmp->backup = ft_strndup(&str[var.n + 1], BUFFER_SIZE);
 			return (var.n + 1);
 		}
 		var.n++;
@@ -42,27 +44,36 @@ char	*load_backup(t_gnl_list *tmp, int *found)
 
 	var = (struct s_var){0, 0, NULL};
 	var.str = ft_strndup(tmp->backup, BUFFER_SIZE);
+	if (!var.str)
+		return (NULL);
 	var.len = find_newline(var.str, tmp);
-	if (var.len)
+	if (var.len && var.str[var.len] != 0)
 	{
 		*found = 1;
 		copy = ft_strndup(var.str, var.len + 1);
+		tmp->backup = ft_strndup(&var.str[var.len], BUFFER_SIZE);
+		if (!copy || !tmp->backup)
+			return (NULL);
 		free(var.str);
 		return (copy);
 	}
 	copy = ft_strndup(var.str, BUFFER_SIZE);
+	if (!copy)
+		return (NULL);
 	free(var.str);
-	// free(tmp->backup);
-	// tmp->backup = NULL;
 	return (copy);
 }
 
-char	*read_line(t_gnl_list *tmp, char **line, int fd, int found)
+char	*read_line(t_gnl_list *tmp, char *line, int fd, int found)
 {
 	t_var	var;
- 
+
 	if (tmp->backup)
-		*line = load_backup(tmp, &found);
+	{
+		line = load_backup(tmp, &found);
+		if (line == NULL)
+			return (NULL);
+	}
 	while (!found)
 	{
 		var.str = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
@@ -76,21 +87,35 @@ char	*read_line(t_gnl_list *tmp, char **line, int fd, int found)
 		}
 		var.str[var.n] = '\0';
 		var.len = find_newline(var.str, tmp); 
+
+		if (line == NULL)
+			line = ft_strndup("", 0);
+		if (line == NULL)
+		{
+			free(var.str);
+			return (NULL);
+		}
 		if (var.len) // newline exists
 		{
-			*line = ft_strjoin(*line, var.str, var.len);
-			free(var.str);
-			if (!*line)
+			tmp->backup = ft_strndup(&var.str[var.len], BUFFER_SIZE);
+			if (!tmp->backup)
+			{
+				free(var.str);
+				free(line);
 				return (NULL);
-			return (*line);
+			}
+			ft_strjoin(line, var.str, var.len);
+			free(var.str);
+			if (!line)
+				return (NULL);
+			return (line);
 		}
-		*line = ft_strjoin(*line, var.str, BUFFER_SIZE);
-		free(var.str);
-		if (!*line)
+		ft_strjoin(line, var.str, BUFFER_SIZE);
+		if (!line)
 			return (NULL);
 	}
 	tmp->eof = 1;
-	return (*line);
+	return (line);
 }
 
 // char	*newline_exists(int len, char **line, char **str);
@@ -102,9 +127,9 @@ char	*read_line(t_gnl_list *tmp, char **line, int fd, int found)
 
 t_gnl_list	*find_fd(t_gnl_list **head, int fd, t_gnl_list *tmp)
 {
-	if (!*head)
+	if (*head == NULL)
 		*head = ft_lstnew(fd);
-	if (!*head)
+	if (*head == NULL)
 		return (NULL);
 	tmp = *head;
 	while (tmp)
@@ -135,12 +160,10 @@ char	*get_next_line(int fd)
 	tmp = find_fd(&head, fd, NULL);
 	if (!tmp)
 		return (NULL);
-	str = NULL;
-	str = read_line(tmp, &str, fd, 0);
+	str = read_line(tmp, NULL, fd, 0);
+	if (!str)
+		return (NULL);
 	if (tmp->eof)
 		head = lst_delone(tmp, head, NULL);
 	return (str);
 }
-
-
-

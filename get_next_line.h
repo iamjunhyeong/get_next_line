@@ -13,7 +13,7 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 # ifndef BUFFER_SIZE
-	# define BUFFER_SIZE 1
+	# define BUFFER_SIZE 2
 #endif
 # define _ERROR -1
 # include <stdlib.h>
@@ -41,7 +41,7 @@ t_gnl_list	*lst_delone(t_gnl_list *remove, t_gnl_list *head, t_gnl_list *tmp);
 char		*get_next_line(int fd);
 char		*ft_strndup(const char *str, size_t n);
 char		*ft_strjoin(char *s1, char const *s2, int n);
-char		*read_line(t_gnl_list *tmp, char **line, int fd, int found);
+char		*read_line(t_gnl_list *tmp, char *line, int fd, int found);
 int			find_newline(char *line, t_gnl_list *tmp);
 char		*load_backup(t_gnl_list *tmp, int *found);
 

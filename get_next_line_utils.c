@@ -22,40 +22,19 @@ char	*ft_strndup(const char *str, size_t n)
 	i = 0;
 	while (len < n && str[len])
 		len++;
-	copy = (char*)malloc(sizeof(char) * (len + 1));
+	copy = malloc(len + 1);
 	if (!copy)
 		return (NULL);
-	while (len-- > 0 || *str)
-		copy[i++] = *str++;
-	copy[i] = '\0';
+	while (len - i > 0 && str[i])
+	{
+		copy[i] = str[i];
+		i++;
+	}
+	copy[len] = '\0';
 	return (copy);
 }
 
-size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
-{
-	size_t	i;
-	size_t	dst_len;
-	size_t	src_len;
-
-	if (!dst)
-	dst_len = ft_strlen(dst);
-	src_len = ft_strlen(src);
-	i = 0;
-	if (dstsize < dst_len + 1)
-		return (dstsize + src_len);
-	if (dstsize > dst_len + 1)
-	{
-		while (src[i] && dst_len + i + 1 < dstsize)
-		{
-			dst[dst_len + i] = src[i];
-			i++;
-		}
-	}
-	dst[dst_len + i] = '\0';
-	return (dst_len + src_len);
-}
-
-char	*ft_strjoin(char *s1, char const *s2, int n)
+char	*ft_strjoin(char *s1, char *s2, int n)
 {
 	t_var	var;
 
@@ -63,17 +42,17 @@ char	*ft_strjoin(char *s1, char const *s2, int n)
 	if (!s2)
 		return (NULL);
 	if (!s1)
-		s1 = ft_strndup("", 0);
-	if (!s1)
 		return (NULL);
 	while (s1[var.n++])
 		var.len++;
 	var.n = 0;
-	while (s2[var.n++] && var.n < n)
+	while (s2[var.n++])
 		var.len++;
 	var.str = (char *)malloc(sizeof(char) * (var.len + 1));
 	if (!var.str)
+	{
 		return (NULL);
+	}
 	var.n = 0;
 	while (*s1)
 		var.str[var.n++] = *s1++;

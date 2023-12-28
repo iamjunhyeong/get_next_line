@@ -22,24 +22,25 @@ char	*ft_strndup(const char *str, size_t n)
 	i = 0;
 	while (len < n && str[len])
 		len++;
-	copy = (char*)malloc(sizeof(char) * (len + 1));
+	copy = malloc(len + 1);
 	if (!copy)
 		return (NULL);
-	while (len-- > 0 || *str)
-		copy[i++] = *str++;
-	copy[i] = '\0';
+	while (len - i > 0 && str[i])
+	{
+		copy[i] = str[i];
+		i++;
+	}
+	copy[len] = '\0';
 	return (copy);
 }
 
-char	*ft_strjoin(char *s1, char const *s2, size_t n)
+char	*ft_strjoin(char *s1, char const *s2, int n)
 {
 	t_var	var;
 
 	var = (struct s_var){0, 0, NULL};
 	if (!s2)
 		return (NULL);
-	if (!s1)
-		s1 = ft_strndup("", 0);
 	if (!s1)
 		return (NULL);
 	while (s1[var.n++])
