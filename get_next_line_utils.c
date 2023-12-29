@@ -36,16 +36,14 @@ char	*ft_strndup(const char *str, size_t n)
 
 char	*ft_strjoin(char *s1, char *s2, int n)
 {
-	t_var	var;
-	int	i = 0;
+	t_strjoin_var	var;
 
-	var = (struct s_var){0, 0, NULL};
+	var = (struct s_strjoin_var){0, 0, 0, 0, NULL};
 	if (!s2 || !s1)
 		return (NULL);
-	while (s1[var.n++])
+	while (s1[var.i++])
 		var.len++;
-	var.n = 0;
-	while (s2[var.n++])
+	while (s2[var.j++])
 		var.len++;
 	var.str = (char *)malloc(sizeof(char) * (var.len + 1));
 	if (!var.str)
@@ -53,12 +51,12 @@ char	*ft_strjoin(char *s1, char *s2, int n)
 		free(s1);
 		return (NULL);
 	}
-	var.n = 0;
-	while (s1[i])
-		var.str[var.n++] = s1[i++];
-	i = 0;
-	while (s2[i] && n--)
-		var.str[var.n++] = s2[i++];
+	var.i = 0;
+	var.j = 0;
+	while (s1[var.i])
+		var.str[var.n++] = s1[var.i++];
+	while (s2[var.j] && n--)
+		var.str[var.n++] = s2[var.j++];
 	var.str[var.n] = 0;
 	free(s1);
 	return ((char *)var.str);
@@ -68,7 +66,7 @@ t_gnl_list	*ft_lstnew(int fd)
 {
 	t_gnl_list	*new;
 
-	new = (t_gnl_list*)malloc(sizeof(t_gnl_list));
+	new = (t_gnl_list *)malloc(sizeof(t_gnl_list));
 	if (!new)
 		return (NULL);
 	new->fd = fd;
@@ -103,4 +101,27 @@ void	lst_delone(t_gnl_list *remove, t_gnl_list **head, t_gnl_list *tmp)
 		}
 		tmp = tmp->next;
 	}
+}
+
+int	find_newline(char *str, t_gnl_list *tmp)
+{
+	t_var	var;
+	int		len;
+
+	len = 0;
+	var = (struct s_var){0, 0, NULL};
+	while (str[var.n] != 0)
+	{
+		if (str[var.n] == '\n')
+		{
+			if (tmp->backup)
+			{
+				free(tmp->backup);
+				tmp->backup = NULL;
+			}
+			return (var.n + 1);
+		}
+		var.n++;
+	}
+	return (0);
 }

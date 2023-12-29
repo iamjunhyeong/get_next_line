@@ -27,6 +27,15 @@ typedef struct s_var
 	char		*str;
 }	t_var;
 
+typedef struct s_strjoin_var
+{
+	size_t		len;
+	size_t		n;
+	size_t		i;
+	size_t		j;
+	char		*str;
+}	t_strjoin_var;
+
 typedef struct s_gnl_list
 {
 	int			fd;
@@ -35,9 +44,17 @@ typedef struct s_gnl_list
 	struct s_gnl_list	*next;
 }	t_gnl_list;
 
+typedef struct s_gnl_var
+{
+	int			found;
+	char		*line;
+	t_gnl_list	*tmp;
+}	t_gnl_var;
+
 t_gnl_list	*ft_lstnew(int fd);
 t_gnl_list	*find_fd(t_gnl_list **head, int fd, t_gnl_list *tmp);
 void		lst_delone(t_gnl_list *remove, t_gnl_list **head, t_gnl_list *tmp);
+char		*read_line_ext(t_var *var, char *line, t_gnl_list *tmp, int *found);
 char		*get_next_line(int fd);
 char		*ft_strndup(const char *str, size_t n);
 char		*ft_strjoin(char *s1, char *s2, int n);
