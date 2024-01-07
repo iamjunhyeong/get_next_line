@@ -106,9 +106,7 @@ void	lst_delone(t_gnl_list *remove, t_gnl_list **head, t_gnl_list *tmp)
 int	find_newline(char *str, t_gnl_list *tmp)
 {
 	t_var	var;
-	int		len;
 
-	len = 0;
 	var = (struct s_var){0, 0, NULL};
 	while (str[var.n] != 0)
 	{
