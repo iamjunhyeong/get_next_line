@@ -59,11 +59,8 @@ char	*read_line(t_gnl_list *tmp, char *line, int fd, int found)
 		}
 		line = read_line_ext(&var, line, tmp, &found);
 		if (!line)
-		{
-			free(var.str);
 			return (NULL);
-		}
-		free(var.str);
+		// free(var.str);
 	}
 	return (line);
 }
@@ -77,14 +74,20 @@ char	*read_line_ext(t_var *var, char *line, t_gnl_list *tmp, int *found)
 	if (line == NULL)
 		line = ft_strndup("", 0);
 	if (line == NULL)
+	{
+		free(var->str);
 		return (NULL);
+	}
 	if (var->len)
 	{
 		if (var->str[var->len])
 		{
 			tmp->backup = ft_strndup(&var->str[var->len], BUFFER_SIZE);
 			if (tmp->backup == NULL)
+			{
+				free(var->str);
 				return (NULL);
+			}
 		}
 		lline = ft_strjoin(line, var->str, var->len);
 		*found = 1;

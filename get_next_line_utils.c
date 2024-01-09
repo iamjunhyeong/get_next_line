@@ -22,10 +22,10 @@ char	*ft_strndup(const char *str, size_t n)
 	i = 0;
 	while (len < n && str[len])
 		len++;
-	copy = malloc(len + 1);
+	copy = (char *)malloc(len + 1);
 	if (!copy)
 		return (NULL);
-	while (len - i > 0 && str[i])
+	while (len > i)
 	{
 		copy[i] = str[i];
 		i++;
@@ -39,8 +39,6 @@ char	*ft_strjoin(char *s1, char *s2, int n)
 	t_strjoin_var	var;
 
 	var = (struct s_strjoin_var){0, 0, 0, 0, NULL};
-	if (!s2 && !s1)
-		return (NULL);
 	while (s1[var.i++])
 		var.len++;
 	while (s2[var.j++])
@@ -49,6 +47,7 @@ char	*ft_strjoin(char *s1, char *s2, int n)
 	if (!var.str)
 	{
 		free(s1);
+		free(s2);
 		return (NULL);
 	}
 	var.i = 0;
@@ -59,6 +58,7 @@ char	*ft_strjoin(char *s1, char *s2, int n)
 		var.str[var.n++] = s2[var.j++];
 	var.str[var.n] = 0;
 	free(s1);
+	free(s2);
 	return ((char *)var.str);
 }
 
