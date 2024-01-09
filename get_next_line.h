@@ -24,7 +24,7 @@
 typedef struct s_var
 {
 	size_t		len;
-	size_t		n;
+	ssize_t		n;
 	char		*str;
 }	t_var;
 
