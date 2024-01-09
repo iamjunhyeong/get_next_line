@@ -12,13 +12,14 @@
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# ifndef BUFFER_SIZE
-	# define BUFFER_SIZE 1
-#endif
-# define _ERROR -1
+
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
 typedef struct s_var
 {
@@ -38,9 +39,9 @@ typedef struct s_strjoin_var
 
 typedef struct s_gnl_list
 {
-	int			fd;
-	int			eof;
-	char		*backup;
+	int					fd;
+	int					eof;
+	char				*backup;
 	struct s_gnl_list	*next;
 }	t_gnl_list;
 

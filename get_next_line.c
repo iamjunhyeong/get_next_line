@@ -26,8 +26,10 @@ char	*load_backup(t_gnl_list *tmp, int *found)
 	{
 		*found = 1;
 		copy = ft_strndup(var.str, var.len);
+		if (!copy)
+			return (NULL);
 		tmp->backup = ft_strndup(&var.str[var.len], BUFFER_SIZE);
-		if (!copy || !tmp->backup)
+		if (!tmp->backup)
 			return (NULL);
 		free(var.str);
 		return (copy);
@@ -68,6 +70,8 @@ char	*read_line(t_gnl_list *tmp, char *line, int fd, int found)
 
 char	*read_line_ext(t_var *var, char *line, t_gnl_list *tmp, int *found)
 {
+	char	*lline;
+
 	var->str[var->n] = '\0';
 	var->len = find_newline(var->str, tmp);
 	if (line == NULL)
@@ -82,14 +86,14 @@ char	*read_line_ext(t_var *var, char *line, t_gnl_list *tmp, int *found)
 			if (tmp->backup == NULL)
 				return (NULL);
 		}
-		line = ft_strjoin(line, var->str, var->len);
-		if (!line)
-			return (NULL);
+		lline = ft_strjoin(line, var->str, var->len);
 		*found = 1;
-		return (line);
+		return (lline);
 	}
-	line = ft_strjoin(line, var->str, BUFFER_SIZE);
-	return (line);
+	lline = ft_strjoin(line, var->str, BUFFER_SIZE);
+	if (!lline)
+		return (NULL);
+	return (lline);
 }
 
 t_gnl_list	*find_fd(t_gnl_list **head, int fd, t_gnl_list *tmp)
@@ -139,7 +143,7 @@ char	*get_next_line(int fd)
 			return (NULL);
 	}
 	var.line = read_line(var.tmp, var.line, fd, var.found);
-	if (!var.line || var.tmp->eof)
+	if (var.line == NULL || var.tmp->eof == 1)
 		lst_delone(var.tmp, &head, NULL);
 	return (var.line);
 }

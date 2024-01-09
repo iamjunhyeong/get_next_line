@@ -39,7 +39,7 @@ char	*ft_strjoin(char *s1, char *s2, int n)
 	t_strjoin_var	var;
 
 	var = (struct s_strjoin_var){0, 0, 0, 0, NULL};
-	if (!s2 || !s1)
+	if (!s2 && !s1)
 		return (NULL);
 	while (s1[var.i++])
 		var.len++;
