@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: junhyeop <junhyeop@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/13 18:03:07 by junhyeop          #+#    #+#             */
-/*   Updated: 2023/11/17 19:55:55 by junhyeop         ###   ########.fr       */
+/*   Created: 2024/01/10 19:28:24 by junhyeop          #+#    #+#             */
+/*   Updated: 2024/01/10 19:28:24 by junhyeop         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,19 +37,19 @@ char	*ft_strndup(const char *str, size_t n)
 char	*ft_strjoin(char *s1, char *s2, int n)
 {
 	t_strjoin_var	var;
+	int				n_cp;
 
+	if (!s1)
+		return (ft_strndup(s2, n));
 	var = (struct s_strjoin_var){0, 0, 0, 0, NULL};
 	while (s1[var.i++])
 		var.len++;
-	while (s2[var.j++])
+	n_cp = n;
+	while (s2[var.j++] && n_cp--)
 		var.len++;
 	var.str = (char *)malloc(sizeof(char) * (var.len + 1));
 	if (!var.str)
-	{
-		free(s1);
-		free(s2);
 		return (NULL);
-	}
 	var.i = 0;
 	var.j = 0;
 	while (s1[var.i])
@@ -57,8 +57,6 @@ char	*ft_strjoin(char *s1, char *s2, int n)
 	while (s2[var.j] && n--)
 		var.str[var.n++] = s2[var.j++];
 	var.str[var.n] = 0;
-	free(s1);
-	free(s2);
 	return ((char *)var.str);
 }
 
@@ -103,23 +101,16 @@ void	lst_delone(t_gnl_list *remove, t_gnl_list **head, t_gnl_list *tmp)
 	}
 }
 
-int	find_newline(char *str, t_gnl_list *tmp)
+int	find_newline(char *line)
 {
-	t_var	var;
+	int	n;
 
-	var = (struct s_var){0, 0, NULL};
-	while (str[var.n] != 0)
+	n = 0;
+	while (line[n] != 0)
 	{
-		if (str[var.n] == '\n')
-		{
-			if (tmp->backup)
-			{
-				free(tmp->backup);
-				tmp->backup = NULL;
-			}
-			return (var.n + 1);
-		}
-		var.n++;
+		if (line[n] == '\n')
+			return (n + 1);
+		n++;
 	}
 	return (0);
 }
